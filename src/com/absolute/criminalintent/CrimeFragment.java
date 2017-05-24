@@ -2,9 +2,12 @@ package com.absolute.criminalintent;
 
 import java.util.zip.Inflater;
 
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
+import android.app.Fragment;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -12,14 +15,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+@SuppressLint("NewApi")
 public class CrimeFragment extends Fragment {
 
 	private Crime mCrime;
 	private EditText mTitleField;
 
-	/* (non-Javadoc)
-	 * @see android.support.v4.app.Fragment#onCreate(android.os.Bundle)
-	 */
+
+
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
