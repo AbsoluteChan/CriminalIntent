@@ -344,8 +344,9 @@ int string abc_shareactionprovider_share_with 0x7f0a000c
 int string abc_shareactionprovider_share_with_application 0x7f0a000b
 int string action_settings 0x7f0a000e
 int string app_name 0x7f0a000d
-int string crime_details_label 0x7f0a0011
-int string crime_solved_label 0x7f0a0012
+int string crime_details_label 0x7f0a0012
+int string crime_solved_label 0x7f0a0013
+int string crime_title 0x7f0a0011
 int string crime_title_hint 0x7f0a000f
 int string crime_title_label 0x7f0a0010
 int style AppBaseTheme 0x7f0b008b
