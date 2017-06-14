@@ -62,7 +62,10 @@ public class CrimeListFragment extends ListFragment {
 		/*Crime c = (Crime)(getListAdapter()).getItem(position);*/
 		Crime c = ((CrimeAdapter)getListAdapter()).getItem(position);
 		/*Log.d(TAG, c.getTitle() + "was clicked");*/
-		Intent i = new Intent(getActivity(), CrimeActivity.class);
+		//废弃使用原来的crimeActivity
+		/*Intent i = new Intent(getActivity(), CrimeActivity.class);*/
+		//Start CrimePagerActivity with this crime
+		Intent i = new Intent(getActivity(),CrimePagerActivity.class);
 		
 		i.putExtra(CrimeFragment.EXTRA_CRIME_ID, c.getId());
 		startActivity(i);
