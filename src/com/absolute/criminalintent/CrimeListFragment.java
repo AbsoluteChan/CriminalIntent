@@ -2,12 +2,19 @@ package com.absolute.criminalintent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.Inflater;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -19,6 +26,7 @@ public class CrimeListFragment extends ListFragment {
 
 	private static final String TAG = "CrimeListFragment";
 	private static final int REQUEST_CRIME = 1;
+	private boolean mSubtitleVisible;
 	private ArrayList<Crime> mCrimes;
 
 	/* (non-Javadoc)
@@ -28,8 +36,14 @@ public class CrimeListFragment extends ListFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+		
+		setHasOptionsMenu(true);
+		setRetainInstance(true);
+		mSubtitleVisible = false;
+		
 		getActivity().setTitle(R.string.crime_title);
 		mCrimes = CrimeLab.get(getActivity()).getCrimes();
+		
 		
 		/*ArrayAdapter<Crime> adapter = 
 				new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, mCrimes);*/
@@ -88,6 +102,91 @@ public class CrimeListFragment extends ListFragment {
 			
 		}
 	}
+
+
+
+	/* (non-Javadoc)
+	 * @see android.support.v4.app.Fragment#onCreateOptionsMenu(android.view.Menu, android.view.MenuInflater)
+	 */
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		// TODO Auto-generated method stub
+		super.onCreateOptionsMenu(menu, inflater);
+		inflater.inflate(R.menu.fragment_crime_lis, menu);
+		MenuItem showSubtitle = menu.findItem(R.id.menu_item_show_subtitle);
+		if(mSubtitleVisible && showSubtitle != null){
+			showSubtitle.setTitle(R.string.hide_subtitle);
+		}
+		
+	}
+	
+	
+
+
+
+	/* (non-Javadoc)
+	 * @see android.support.v4.app.Fragment#onOptionsItemSelected(android.view.MenuItem)
+	 */
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// TODO Auto-generated method stub
+		
+		switch (item.getItemId()) {
+		case R.id.menu_item_new_crime:
+			 Crime crime = new Crime();
+			 CrimeLab.get(getActivity()).addCrime(crime);
+			 Intent i = new Intent(getActivity(), CrimePagerActivity.class);
+			 i.putExtra(CrimeFragment.EXTRA_CRIME_ID, crime.getId());
+			 startActivityForResult(i, 0);
+			 
+			 return true;			
+		case R.id.menu_item_show_subtitle:
+			 if(getActivity().getActionBar().getSubtitle() == null){
+				 getActivity().getActionBar().setSubtitle(R.string.subtitle);
+				 mSubtitleVisible = true;
+			 }
+			 else{
+				 getActivity().getActionBar().setSubtitle(null);
+				 item.setTitle(R.string.show_subtitile);
+				 mSubtitleVisible = false;
+			 }
+			 return true;
+		default:			
+			return super.onOptionsItemSelected(item);
+			
+		}		 
+					
+		
+		
+	}
+
+
+
+
+
+	/* (non-Javadoc)
+	 * @see android.support.v4.app.ListFragment#onCreateView(android.view.LayoutInflater, android.view.ViewGroup, android.os.Bundle)
+	 */
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup parent,
+			Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		View v = super.onCreateView(inflater, parent, savedInstanceState);
+		
+		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB){
+			if(mSubtitleVisible ){
+				getActivity().getActionBar().setSubtitle(R.string.subtitle);
+			}
+		}
+		
+		
+		
+		return v;
+	}
+
+
 
 
 
