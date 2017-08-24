@@ -11,16 +11,21 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView.MultiChoiceModeListener;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 
 public class CrimeListFragment extends ListFragment {
 
@@ -156,6 +161,7 @@ public class CrimeListFragment extends ListFragment {
 			return super.onOptionsItemSelected(item);
 			
 		}		 
+		
 					
 		
 		
@@ -163,6 +169,48 @@ public class CrimeListFragment extends ListFragment {
 
 
 
+
+
+
+
+
+	/* (non-Javadoc)
+	 * @see android.support.v4.app.Fragment#onCreateContextMenu(android.view.ContextMenu, android.view.View, android.view.ContextMenu.ContextMenuInfo)
+	 */
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v,
+			ContextMenuInfo menuInfo) {
+		// TODO Auto-generated method stub
+		getActivity().getMenuInflater().inflate(R.menu.crime_list_item_context, menu);
+	}
+
+	
+	
+
+	/* (non-Javadoc)
+	 * @see android.support.v4.app.Fragment#onContextItemSelected(android.view.MenuItem)
+	 */
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		// TODO Auto-generated method stub
+		AdapterContextMenuInfo info = (AdapterContextMenuInfo)item.getMenuInfo();
+		int position = info.position;
+		CrimeAdapter adapter = (CrimeAdapter)getListAdapter();
+		Crime crime = adapter.getItem(position);
+		
+		switch (item.getItemId()) {
+		case R.id.menu_item_delete_crime:
+			CrimeLab.get(getActivity()).deleteCrime(crime);
+			adapter.notifyDataSetChanged();
+			return true;
+			
+
+		default:
+			break;
+		}
+		
+		return super.onContextItemSelected(item);
+	}
 
 
 	/* (non-Javadoc)
@@ -178,7 +226,68 @@ public class CrimeListFragment extends ListFragment {
 		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB){
 			if(mSubtitleVisible ){
 				getActivity().getActionBar().setSubtitle(R.string.subtitle);
-			}
+			}			
+		}
+		
+		ListView listView = (ListView)v.findViewById(android.R.id.list);
+		
+		if(Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB){
+				registerForContextMenu(listView);
+		}else {
+			
+			listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+			listView.setMultiChoiceModeListener(new MultiChoiceModeListener() {
+				
+				@Override
+				public boolean onPrepareActionMode(ActionMode arg0, Menu arg1) {
+					// TODO Auto-generated method stub
+					return false;
+				}
+				
+				@Override
+				public void onDestroyActionMode(ActionMode arg0) {
+					// TODO Auto-generated method stub
+					
+				}
+				
+				@Override
+				public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+					// TODO Auto-generated method stub
+					MenuInflater inflater = mode.getMenuInflater();
+					inflater.inflate(R.menu.crime_list_item_context, menu);
+					return true;
+				}
+				
+				@Override
+				public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+					// TODO Auto-generated method stub
+					switch (item.getItemId()) {
+					case R.id.menu_item_delete_crime:
+						CrimeAdapter adapter = (CrimeAdapter)getListAdapter();
+						CrimeLab crimeLab = CrimeLab.get(getActivity());
+						for (int i = adapter.getCount() - 1; i >= 0 ; i--) {
+							if(getListView().isItemChecked(i))
+							{
+								crimeLab.deleteCrime(adapter.getItem(i));
+							}
+						}
+						mode.finish();
+						adapter.notifyDataSetChanged();
+						return true;
+					default:
+						return false;
+					}
+					
+				}
+				
+				@Override
+				public void onItemCheckedStateChanged(ActionMode arg0, int arg1, long arg2,
+						boolean arg3) {
+					// TODO Auto-generated method stub
+					
+				}
+			});
+			
 		}
 		
 		

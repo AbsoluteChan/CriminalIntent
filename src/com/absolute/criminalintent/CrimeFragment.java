@@ -148,7 +148,8 @@ public class CrimeFragment extends Fragment {
 			@Override
 			public void onTextChanged(CharSequence c, int start, int before, int count) {
 				// TODO Auto-generated method stub
-				
+				 
+				mCrime.setTitle(c.toString());
 			}
 			
 			@Override
