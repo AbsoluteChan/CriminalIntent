@@ -7,6 +7,8 @@ import java.util.zip.Inflater;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.hardware.Camera;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -22,9 +24,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageButton;
 import android.widget.Toast;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
@@ -39,6 +43,7 @@ public class CrimeFragment extends Fragment {
 	protected static final int REQUEST_DATE = 0;
 
 	private Crime mCrime;
+	private ImageButton mPhotoButton;
 	private EditText mTitleField;
 	private Button mDateButton;
 	private CheckBox mSolvedCheckBox;
@@ -140,6 +145,30 @@ public class CrimeFragment extends Fragment {
 				getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);				
 			}
 		}
+		
+		
+		mPhotoButton = (ImageButton)v.findViewById(R.id.crime_imageButton);
+		
+		//if camera is not availabel disbale camera functionality
+		PackageManager pm = getActivity().getPackageManager();
+		boolean hasACamera = pm.hasSystemFeature(PackageManager.FEATURE_CAMERA)|| 
+							pm.hasSystemFeature(PackageManager.FEATURE_CAMERA_FRONT)||
+							Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD ||
+							Camera.getNumberOfCameras() > 0 ;
+		if(!hasACamera){
+			mPhotoButton.setEnabled(false);
+		}
+		
+		mPhotoButton.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Intent intent = new Intent(getActivity(), CrimeCameraActivity.class);				
+				startActivity(intent);
+			}
+		});		
+		
 		
 		mTitleField = (EditText)v.findViewById(R.id.crime_title);
 		mTitleField.setText(mCrime.getTitle());

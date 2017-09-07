@@ -4,9 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.Inflater;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.hardware.Camera;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
@@ -37,6 +40,7 @@ public class CrimeListFragment extends ListFragment {
 	/* (non-Javadoc)
 	 * @see android.support.v4.app.Fragment#onCreate(android.os.Bundle)
 	 */
+	@SuppressLint("NewApi")
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -48,6 +52,8 @@ public class CrimeListFragment extends ListFragment {
 		
 		getActivity().setTitle(R.string.crime_title);
 		mCrimes = CrimeLab.get(getActivity()).getCrimes();
+		
+		
 		
 		
 		/*ArrayAdapter<Crime> adapter = 
