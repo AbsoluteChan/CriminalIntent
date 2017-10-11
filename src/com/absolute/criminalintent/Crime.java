@@ -12,6 +12,7 @@ public class Crime {
 	private static final String JSON_TITLE = "title";
 	private static final String JSON_SOLVED = "solved";
 	private static final String JSON_DATE = "date";
+	private static final String JSON_PHOTO = "photo";
 	
 	
 	private UUID mId;
@@ -19,6 +20,7 @@ public class Crime {
 	//添加2个变量
 	private Date mDate;
 	private boolean mSolved;
+	private Photo mPhoto;
 	
 	
 	/* (non-Javadoc)
@@ -53,6 +55,9 @@ public class Crime {
 		}
 		mSolved = json.getBoolean(JSON_SOLVED);
 		mDate = new Date(json.getLong(JSON_DATE));
+		if(mPhoto != null){
+			json.put(JSON_PHOTO, mPhoto.toJSON());
+		}
 	}
 	
 
@@ -103,6 +108,20 @@ public class Crime {
 	 */
 	public void setSolved(boolean solved) {
 		mSolved = solved;
+	}
+
+	/**
+	 * @return the photo
+	 */
+	public Photo getPhoto() {
+		return mPhoto;
+	}
+
+	/**
+	 * @param photo the photo to set
+	 */
+	public void setPhoto(Photo photo) {
+		mPhoto = photo;
 	}
 	
 	
