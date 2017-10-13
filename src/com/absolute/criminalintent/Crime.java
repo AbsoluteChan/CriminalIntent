@@ -13,7 +13,7 @@ public class Crime {
 	private static final String JSON_SOLVED = "solved";
 	private static final String JSON_DATE = "date";
 	private static final String JSON_PHOTO = "photo";
-	
+	private static final String JSON_SUSPECT ="suspect";
 	
 	private UUID mId;
 	private String mTitle;
@@ -21,8 +21,10 @@ public class Crime {
 	private Date mDate;
 	private boolean mSolved;
 	private Photo mPhoto;
+	private String mSuspect;
 	
 	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
@@ -42,7 +44,7 @@ public class Crime {
 		json.put(JSON_TITLE,mTitle);
 		json.put(JSON_SOLVED, mSolved);
 		json.put(JSON_DATE,mDate.getTime());
-				
+		json.put(JSON_SUSPECT, mSuspect);
 		return json;
 		
 	}
@@ -53,11 +55,16 @@ public class Crime {
 		if(json.has(JSON_TITLE)){
 			mTitle = json.getString(JSON_TITLE);
 		}
+		if(json.has(JSON_SUSPECT)){
+			mSuspect = json.getString(JSON_SUSPECT);
+		}
+		
 		mSolved = json.getBoolean(JSON_SOLVED);
 		mDate = new Date(json.getLong(JSON_DATE));
 		if(mPhoto != null){
 			json.put(JSON_PHOTO, mPhoto.toJSON());
 		}
+		
 	}
 	
 
@@ -124,6 +131,18 @@ public class Crime {
 		mPhoto = photo;
 	}
 	
-	
+	/**
+	 * @return the suspect
+	 */
+	public String getSuspect() {
+		return mSuspect;
+	}
+
+	/**
+	 * @param suspect the suspect to set
+	 */
+	public void setSuspect(String suspect) {
+		mSuspect = suspect;
+	}
 
 }

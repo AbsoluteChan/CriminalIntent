@@ -226,6 +226,8 @@ public class CrimeFragment extends Fragment {
 				
 				//startActivity(intent);
 				startActivityForResult(intent, REQUEST_PHOTO);
+				
+				
 			}
 		});		
 		
@@ -298,6 +300,30 @@ public class CrimeFragment extends Fragment {
 		mPhotoView.setImageDrawable(b);
 		
 	}
+	private String getCrimeReport(){
+		String solvedString = null;
+		if(mCrime.isSolved()){
+			solvedString = getString(R.string.crime_report_solved);
+		}else {
+			solvedString = getString(R.string.crime_report_unsolved);
+		}
+		
+		String dateFormate = "EEE, MMM dd";
+		String dateString = (String) DateFormat.format(dateFormate, mCrime.getDate());
+		
+		String suspect = mCrime.getSuspect();
+		if(suspect == null){
+			suspect = getString(R.string.crime_report_no_suspect);
+		}else {
+			suspect = getString(R.string.crime_report_suspect,suspect);
+		}
+		
+		String report = getString(R.string.crime_report,mCrime.getTitle(),dateString,solvedString,suspect);
+		
+		return report;
+		
+	}
+	
 	
 	public static CrimeFragment newInstance(UUID crimeId){
 		Bundle args = new Bundle();
