@@ -4,14 +4,18 @@ import java.util.Date;
 import java.util.UUID;
 import java.util.zip.Inflater;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.drawable.BitmapDrawable;
 import android.hardware.Camera;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -46,6 +50,7 @@ public class CrimeFragment extends Fragment {
 
 	protected static final int REQUEST_DATE = 0;
 	protected static final int REQUEST_PHOTO = 1;
+	protected static final int REQUEST_CONTACT = 2;
 
 	private Crime mCrime;
 	private ImageButton mPhotoButton;
@@ -53,6 +58,9 @@ public class CrimeFragment extends Fragment {
 	private Button mDateButton;
 	private CheckBox mSolvedCheckBox;
 	private ImageView mPhotoView;
+	private Button reportButton;
+	private Button mSuspectButton;
+	private Button mPhoneButton;
 
 	/* (non-Javadoc)
 	 * @see android.support.v4.app.Fragment#onCreate(android.os.Bundle)
@@ -116,6 +124,7 @@ public class CrimeFragment extends Fragment {
 	/* (non-Javadoc)
 	 * @see android.support.v4.app.Fragment#onActivityResult(int, int, android.content.Intent)
 	 */
+	@SuppressLint("NewApi")
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		// TODO Auto-generated method stub
@@ -135,9 +144,26 @@ public class CrimeFragment extends Fragment {
 				Photo p = new Photo(filename);
 				mCrime.setPhoto(p);
 				Log.i(TAG, "Crime---> " + mCrime.getTitle() + "has a photo");
-				showPhoto();
-				
+				showPhoto();				
 			}
+			
+		}else if (requestCode == REQUEST_CONTACT){
+			Uri contactUri = data.getData();
+			String[] queryFeilds = new String[]{
+					ContactsContract.Contacts.DISPLAY_NAME
+			};
+			
+			Cursor c = getActivity().getContentResolver().query(contactUri, queryFeilds, null, null, null);
+			if(c.getCount() == 0){
+				c.close();
+				return;
+			}
+			
+			c.moveToFirst();
+			String suspect = c.getString(0);
+			mCrime.setSuspect(suspect);
+			mSuspectButton.setText(suspect);
+			c.close();
 			
 		}
 		
@@ -283,6 +309,47 @@ public class CrimeFragment extends Fragment {
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				// TODO Auto-generated method stub
 				mCrime.setSolved(isChecked);
+			}
+		});
+		
+		mSuspectButton = (Button)v.findViewById(R.id.crime_suspectButton);
+		mSuspectButton.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Intent i = new Intent(Intent.ACTION_PICK,ContactsContract.Contacts.CONTENT_URI);
+				startActivityForResult(i, REQUEST_CONTACT);
+				
+			}
+		});
+		
+		
+		reportButton = (Button)v.findViewById(R.id.crime_reportButton);
+		reportButton.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Intent i = new Intent(Intent.ACTION_SEND);
+				i.setType("text/plain");
+				i.putExtra(Intent.EXTRA_TEXT, getCrimeReport());
+				i.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.crime_report_subject));
+				i = Intent.createChooser(i, getString(R.string.send_report));
+				startActivity(i);
+				
+			}
+		});
+		
+		mPhoneButton = (Button)v.findViewById(R.id.crime_PhoneButton);
+		mPhoneButton.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Intent i = new Intent(Intent.ACTION_DIAL);
+				i.setData(Uri.parse("tel:10086"));
+				startActivity(i);
 			}
 		});
 		
